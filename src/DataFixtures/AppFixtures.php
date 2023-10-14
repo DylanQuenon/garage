@@ -4,6 +4,7 @@ namespace App\DataFixtures;
 
 use Faker\Factory;
 use App\Entity\Cars;
+use App\Entity\Images;
 use Cocur\Slugify\Slugify;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -36,7 +37,14 @@ class AppFixtures extends Fixture
                 ->setMarque($marque)
                 ->setKm(rand(1,500000));
 
-
+                for($g=1;$g<=rand(2,5);$g++)
+                {
+                    $images=new Images();
+                    $images->setUrl('https://picsum.photos/id/'.$g.'/900')
+                    ->setCaption($faker->sentence())
+                    ->setCars($cars);
+                    $manager->persist($images);
+                }
             $manager->persist($cars);
         }
         // $product = new Product();
