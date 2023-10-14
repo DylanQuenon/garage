@@ -24,7 +24,7 @@ class AppFixtures extends Fixture
             $introduction= $faker->paragraph(2);
             $content = '<p>'.join('</p><p>', $faker->paragraphs(5)).'</p>';
             $marque=$faker->sentence();
-            $model=$faker->sentence();
+    
 
            
 
@@ -34,7 +34,6 @@ class AppFixtures extends Fixture
                 ->setContent($content)
                 ->setPrice(rand(40,200))
                 ->setMarque($marque)
-                ->setModel($model)
                 ->setKm(rand(1,500000));
 
 
