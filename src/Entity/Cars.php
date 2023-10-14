@@ -3,15 +3,18 @@
 namespace App\Entity;
 
 use Cocur\Slugify\Slugify;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use ORM\HasLifecycleCallbacks;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\CarsRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CarsRepository::class)]
 #[ORM\HasLifecycleCallbacks]
+#[UniqueEntity(fields:['nom'], message:"Une autre annonce possède déjà ce titre, merci de le modifier")]
 class Cars
 {
     #[ORM\Id]
@@ -20,6 +23,7 @@ class Cars
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\Length(min: 3, max: 255, minMessage:"Le nom doit faire plus de 3 caractères", maxMessage: "Le nom ne doit pas faire plus de 255 caractères")]
     private ?string $nom = null;
 
     #[ORM\Column(length: 255)]
@@ -29,21 +33,26 @@ class Cars
     private ?float $price = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Assert\Length(min: 20, max: 255, minMessage:"L'introduction doit faire plus de 20 caractères", maxMessage: "L'introduction ne doit pas faire plus de 255 caractères")]
     private ?string $introduction = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Assert\Length(min: 100, minMessage:'Votre description doit faire plus de 100 caractères')]
     private ?string $content = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\Url(message: "Il faut une URL valide")]
     private ?string $coverImage = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\Length(min: 2, max: 255, minMessage:"La marque doit faire plus de 2 caractères", maxMessage: "La marque ne doit pas faire plus de 255 caractères")]
     private ?string $marque = null;
 
     #[ORM\Column]
     private ?int $km = null;
 
     #[ORM\OneToMany(mappedBy: 'cars', targetEntity: Images::class, orphanRemoval: true)]
+    #[Assert\Valid()]
     private Collection $images;
 
     public function __construct()
