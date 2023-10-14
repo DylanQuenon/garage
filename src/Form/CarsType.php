@@ -27,12 +27,12 @@ class CarsType extends AbstractType
         ->add('slug', TextType::class, $this->getConfiguration('Slug', 'Adresse web (automatique)',[
             'required' => false
         ]))
-        ->add('marque',TextType::class, $this->getConfiguration('Introduction','Donnez la marque de votre voiture'))
+        ->add('marque',TextType::class, $this->getConfiguration('Marque','Donnez la marque de votre voiture'))
         ->add('coverImage', UrlType::class, $this->getConfiguration("Url de l'image", "Donnez l'adresse de votre image"))
         ->add('introduction', TextType::class, $this->getConfiguration('Introduction','Donnez une description globale de la voiture'))
         ->add('content', TextareaType::class, $this->getConfiguration('Description détaillée','Donnez une description de votre voiture'))
-        ->add('km',IntegerType::class, $this->getConfiguration('Nombre de chambre','Donnez le nombre de km de la voiture'))
-        ->add('price', MoneyType::class, $this->getConfiguration('Prix par nuit','Indiquer le prix que vous voulez pour une nuit'))
+        ->add('km',IntegerType::class, $this->getConfiguration('Nombre de kilomètres','Donnez le nombre de km de la voiture'))
+        ->add('price', MoneyType::class, $this->getConfiguration('Prix par jour','Indiquer le prix que vous voulez pour une journée'))
         ;
     }
 
