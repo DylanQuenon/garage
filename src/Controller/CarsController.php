@@ -22,6 +22,11 @@ class CarsController extends AbstractController
 
         if($form->isSubmitted() && $form->isValid())
         {
+            foreach($cars->getImages() as $image)
+            {
+                $image->setCars($cars);
+                $manager->persist($image);
+            }
      
             $manager->persist($cars);
        
