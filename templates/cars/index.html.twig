@@ -7,7 +7,7 @@
 	<div class="container">
 		<div class="row">
 			{% for car in cars %}
-				{% set url = path('cars_show', {'slug':car.slug}) %}
+				{% set url = path('cars_show', {'slug':car.slug}) %} {#sert à rentrer le champ slug dans l'url et ainsi pas devoir se répéter dans les href#}
 				<div class="col-md-4">
 					<div class="card bg-light mb-3">
 						<div class="card-hecarer text-center">

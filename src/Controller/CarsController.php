@@ -47,6 +47,51 @@ class CarsController extends AbstractController
 
 
     }
+    /**
+     * Permet d'éditer une voiture
+     *
+     * @param Request $request
+     * @param EntityManagerInterface $manager
+     * @param Cars $cars
+     * @return Response
+     */
+    #[Route('/cars/{slug}/edit', name:"cars_edit")]
+    public function edit(Request $request, EntityManagerInterface $manager, Cars $cars): Response
+    {
+        $form = $this->createForm(CarsType::class, $cars);
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid())
+        {
+
+            // si je veux que le slug soit automatique 
+            // $ad->setSlug("");
+
+              // gestion des images 
+              foreach($cars->getImages() as $image)
+              {
+                  $image->setCars($cars);
+                  $manager->persist($image);
+              }
+
+              $manager->persist($cars);
+              $manager->flush();
+
+              $this->addFlash(
+                'success',
+                "L'annonce <strong>".$cars->getNom()."</strong> a bien été modifiée!"
+              );
+
+              return $this->redirectToRoute('cars_show',[
+                'slug' => $cars->getSlug()
+              ]);
+
+        }
+        return $this->render("cars/edit.html.twig", [
+            "cars" => $cars,
+            "myForm" => $form->createView()
+        ]);
+        
+    }
     #[Route('/cars', name: 'cars_index')]
     public function index(CarsRepository $repo): Response
     {
@@ -55,6 +100,8 @@ class CarsController extends AbstractController
             'cars' => $cars,
         ]);
     }
+
+
     #[Route("/cars/{slug}", name:"cars_show")]
     public function show(string $slug, Cars $car): Response
     {
