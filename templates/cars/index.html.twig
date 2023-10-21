@@ -1,31 +1,33 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Nos Annonces
-{% endblock %}
+{% block title %}Nos Annonces{% endblock %}
 
 {% block body %}
-	<div class="container">
-		<div class="row">
-			{% for car in cars %}
-				{% set url = path('cars_show', {'slug':car.slug}) %} {#sert à rentrer le champ slug dans l'url et ainsi pas devoir se répéter dans les href#}
-				<div class="col-md-4">
-					<div class="card bg-light mb-3">
-						<div class="card-hecarer text-center">
-							{{car.km}}
-							Kilomètres,
-							<strong>{{car.price}}€ / jour</strong>
-						</div>
-						<a href="{{url}}">
-							<img src="{{car.coverImage}}" alt="image de l'annonce {{car.nom}}" class="starsimg">
-						</a>
-						<div class="card-body">
-							<h4 class="card-title">{{car.nom}}</h4>
-							<p class="card-text">{{car.introduction}}</p>
-							<a href="{{url}}" class="btn btn-secondary">En savoir plus</a>
-						</div>
-					</div>
-				</div>
-			{% endfor %}
-		</div>
-	</div>
+    <div class="container">
+        <div class="row">
+            {% for car in pagination.getData() %}
+                {% set url = path('cars_show', {'slug': car.slug}) %}
+                <div class="col-md-4">
+                    <div class="card bg-light mb-3">
+                        <div class="card-header text-center">
+                            {{ car.km }} Kilomètres,
+                            <strong>{{ car.price }}€ / jour</strong>
+                        </div>
+                        <a href="{{ url }}">
+                            <img src="{{ car.coverImage }}" alt="image de l'annonce {{ car.nom }}" class="starsimg">
+                        </a>
+                        <div class="card-body">
+                            <h4 class="card-title">{{ car.nom }}</h4>
+                            <p class="card-text">{{ car.introduction }}</p>
+                            <a href="{{ url }}" class="btn btn-secondary">En savoir plus</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        
+        <div class="pagination">
+            {{ pagination.display() }}
+        </div>
+    </div>
 {% endblock %}

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Cars;
 use App\Form\CarsType;
 use App\Repository\CarsRepository;
+use App\Service\PaginationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -92,13 +93,15 @@ class CarsController extends AbstractController
         ]);
         
     }
-    #[Route('/cars', name: 'cars_index')]
-    public function index(CarsRepository $repo): Response
+    #[Route('/cars/{page<\d+>?1}', name: 'cars_index')]
+    public function index(CarsRepository $repo,$page,PaginationService $pagination): Response
     {
-        $cars=$repo->findAll();
+        $pagination->setEntityClass(Cars::class)
+                    ->setPage($page);
         return $this->render('cars/index.html.twig', [
-            'cars' => $cars,
+            'pagination' => $pagination
         ]);
+        dump($pagination);
     }
 
 
