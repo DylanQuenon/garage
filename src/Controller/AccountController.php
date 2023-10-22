@@ -10,6 +10,7 @@ use App\Form\PasswordUpdateType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
@@ -61,6 +62,24 @@ class AccountController extends AbstractController
         // partie traitement du formulaire
         if($form->isSubmitted() && $form->isValid())
         {
+            $file = $form['picture']->getData();
+            if(!empty($file))
+            {
+                $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = transliterator_transliterate('Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
+                $newFilename = $safeFilename."-".uniqid().'.'.$file->guessExtension();
+                try{
+                    $file->move(
+                        $this->getParameter('uploads_directory'),
+                        $newFilename
+                    );
+                }catch(FileException $e)
+                {
+                    return $e->getMessage();
+                }
+                $user->setPicture($newFilename);
+
+            }
             // gestion de l'inscription dans la bdd
             $hash = $hasher->hashPassword($user, $user->getPassword());
             $user->setPassword($hash);
@@ -88,6 +107,16 @@ class AccountController extends AbstractController
     public function profile(Request $request, EntityManagerInterface $manager): Response
     {
         $user = $this->getUser(); // permet de récup l'utilisateur connecté
+
+        // pour la validation des images (plus tard validation groups)
+        $fileName = $user->getPicture();
+        if(!empty($fileName)){
+            $user->setPicture(
+                new File($this->getParameter('uploads_directory').'/'.$user->getPicture())
+            );
+        }
+     
+     
         $form = $this->createForm(AccountType::class,$user);
         $form->handleRequest($request);
 
@@ -135,6 +164,8 @@ class AccountController extends AbstractController
                 $hash = $hasher->hashPassword($user, $newPassword);
 
                 $user->setPassword($hash);
+                $user->setSlug('')
+                ->setPicture($fileName);
                 $manager->persist($user);
                 $manager->flush();
 
