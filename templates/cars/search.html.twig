@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+{% block title %}Résultats de la recherche{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1>Résultats de la recherche</h1>
+    
+        <form method="get" action="{{ path('cars_search') }}" class="mb-4">
+            <div class="input-group">
+                <input type="text" name="q" class="form-control" placeholder="Rechercher..." value="{{ query }}">
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-primary">Rechercher</button>
+                </div>
+            </div>
+        </form>
+      {% if results is empty %}
+            <p>Aucun résultat trouvé</p>
+        {% else %}
+        <ul class="list-group">
+            {% for car in results %}
+                <li class="list-group-item">
+                    <div class="row">
+                        <div class="col-3">
+                            <img src="{{car.coverImage }}" alt="{{ car.nom }}" class="img-fluid">
+                        </div>
+                        <div class="col-9">
+                            <h5 class="mb-0">
+                                <a href="{{ path('cars_show', {'slug': car.slug}) }}">{{ car.nom }}</a>
+                            </h5>
+                            <p class="mb-0">
+                                {{ car.introduction|length > 50 ? car.introduction|slice(0, 50) ~ '...' : car.introduction }}
+                            </p>
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -20,6 +20,29 @@ class CarsRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Cars::class);
     }
+    public function searchByKeyword(string $keyword)
+{
+    return $this->createQueryBuilder('c')
+        ->where('c.nom LIKE :keyword')
+        ->setParameter('keyword', '%' . $keyword . '%')
+        ->getQuery()
+        ->getResult();
+}
+public function MarquesAutorisees()
+    {
+        $qb = $this->createQueryBuilder('c')
+            ->select('DISTINCT c.marque')
+            ->getQuery();
+
+        $results = $qb->getResult();
+
+        $marquesAutorisees = [];
+        foreach ($results as $result) {
+            $marquesAutorisees[] = $result['marque'];
+        }
+
+        return $marquesAutorisees;
+    }
 
 //    /**
 //     * @return Cars[] Returns an array of Cars objects

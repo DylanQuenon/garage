@@ -93,6 +93,10 @@ class CarsController extends AbstractController
         ]);
         
     }
+  
+
+
+    
     #[Route('/cars/{page<\d+>?1}', name: 'cars_index')]
     public function index(CarsRepository $repo,$page,PaginationService $pagination): Response
     {
@@ -101,11 +105,59 @@ class CarsController extends AbstractController
         return $this->render('cars/index.html.twig', [
             'pagination' => $pagination
         ]);
-        dump($pagination);
+        
+    }
+  
+    #[Route("/cars/search", name: "cars_search")]
+    public function search(Request $request, CarsRepository $carsRepository): Response
+    {
+        $query = $request->query->get('q');
+
+        if ($query) {
+            $results = $carsRepository->searchByKeyword($query); // Créez cette méthode dans votre repository
+        } else {
+            $results = [];
+        }
+
+        return $this->render('cars/search.html.twig', [
+            'query' => $query,
+            'results' => $results,
+        ]);
+    }
+    // Dans votre contrôleur CarsController
+
+    #[Route('/cars/brands', name: 'cars_brands_list')]
+    public function brandList( CarsRepository $carsRepository): Response
+    {
+        $brands = $carsRepository->MarquesAutorisees(); // Remplacez ceci par la méthode réelle pour obtenir les marques
+
+        return $this->render('cars/brands_list.html.twig', [
+            'brands' => $brands,
+        ]);
     }
 
+    #[Route('/cars/brands/{brand}', name: 'cars_brands')]
+    public function brands($brand, CarsRepository $repo): Response
+    {
+        
+       
+        $marquesAutorisees = $repo->MarquesAutorisees();
 
+        // Vérifiez si la marque spécifiée est autorisée
+        if (!in_array($brand, $marquesAutorisees)) {
+            throw $this->createNotFoundException('Marque non autorisée');
+        }
+
+        // Récupérez la liste des voitures de la marque spécifiée depuis votre base de données.
+        $cars = $repo->findBy(['marque' => $brand]);
+    
+        return $this->render('cars/brands.html.twig', [
+            'brand' => $brand,
+            'cars' => $cars,
+        ]);
+    }
     #[Route("/cars/{slug}", name:"cars_show")]
+
     public function show(string $slug, Cars $car): Response
     {
         // $ad = $repo->findby(["slug"=>$slug])
@@ -114,4 +166,5 @@ class CarsController extends AbstractController
             'car' => $car
         ]);
     }
+
 }
