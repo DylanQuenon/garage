@@ -23,7 +23,6 @@ class PaginationService{
         $this->route = $route;
         return $this;
     }
-    
     public function getRoute(){
         return $this->route;
     }

@@ -129,7 +129,7 @@ class CarsController extends AbstractController
     #[Route('/cars/brands', name: 'cars_brands_list')]
     public function brandList( CarsRepository $carsRepository): Response
     {
-        $brands = $carsRepository->MarquesAutorisees(); // Remplacez ceci par la méthode réelle pour obtenir les marques
+        $brands = $carsRepository->MarquesAutorisees(); 
 
         return $this->render('cars/brands_list.html.twig', [
             'brands' => $brands,
